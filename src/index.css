@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+/* 1. Wedding colour palette and font.
+   Each name becomes Tailwind classes, e.g. bg-ivory, text-ink, border-gold-soft, outline-gold-deep. */
+@theme {
+  --color-ivory: #FFFCF7;      /* page background */
+  --color-gold: #C6A15B;       /* champagne gold accent */
+  --color-gold-deep: #9A7B35;  /* darker gold, used where contrast matters (icons, focus rings) */
+  --color-gold-soft: #E9D9B5;  /* pale gold borders */
+  --color-blush: #E8C5C5;      /* soft rose pink */
+  --color-rose-deep: #C65D73;  /* favourite heart */
+  --color-wine: #7A3040;       /* error text */
+  --color-ink: #49382D;        /* warm dark brown text */
+  --font-display: "Cormorant Garamond", "Playfair Display", Georgia, "Times New Roman", serif;
+}
+
+/* 2. Page base: ivory background and brown text.
+   The background is set on <html> so the decoration layers below can sit in front of it. */
+@layer base {
+  html {
+    background-color: var(--color-ivory);
+  }
+  body {
+    position: relative; /* lets the full-page decoration layer fill the whole page height */
+    min-height: 100vh;
+    color: var(--color-ink);
+  }
+}
+
+/* 3. Decorative background. Four faint layers, all behind the content (z-index: -1)
+   and all ignoring the mouse (pointer-events: none), so nothing can be blocked or covered. */
+
+/* Layer A: scattered rings, hearts, havan, diyas, lotus and marigolds across the full page height.
+   Two tiles of different sizes are repeated, so the pattern does not look obviously regular. */
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url("./assets/wedding/scatter-a.svg"), url("./assets/wedding/scatter-b.svg");
+  background-size: 760px 760px, 1100px 1100px;
+  background-position: 0 0, 380px 520px;
+  background-repeat: repeat, repeat;
+}
+
+/* Layer B: faint hearts drifting slowly upward (one drift = one tile height, so it loops smoothly). */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(100vh + 640px);
+  z-index: -1;
+  pointer-events: none;
+  background-image: url("./assets/wedding/float-hearts.svg");
+  background-size: 640px 640px;
+  background-repeat: repeat;
+  animation: hearts-float 120s linear infinite;
+}
+
+/* Layer C: tiny gold sparkles and two rings that fade softly in and out. */
+html::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url("./assets/wedding/sparkles-rings.svg");
+  background-size: 900px 900px;
+  animation: sparkle-glow 9s ease-in-out infinite alternate;
+}
+
+@keyframes hearts-float {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-640px); }
+}
+
+@keyframes sparkle-glow {
+  from { opacity: 0.35; }
+  to   { opacity: 1; }
+}
+
+/* 4. Reduced motion: people who ask their device for less motion get still decorations. */
+@media (prefers-reduced-motion: reduce) {
+  html::before,
+  body::after {
+    animation: none;
+  }
+}
